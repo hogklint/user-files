@@ -5,7 +5,8 @@ CURL_QUITE="-fs"
 
 [ -z ${JENKINS_TEST_JOB+x} ] && error "JENKINS_TEST_JOB not set"
 ASDF2_NAME="ASDF1_P2952_ASDF2_ci-auto-test"
-ASDF4_NAME="asdf5-asdf4_android_ci-auto-test"
+#ASDF4_NAME="asdf5-asdf4_android_ci-auto-test"
+ASDF4_NAME="asdf5-asdf4-android-integration-tests"
 
 function error()
 {
