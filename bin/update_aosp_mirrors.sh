@@ -3,6 +3,7 @@
 MIRRORS_DIR="/home/common/mirrors"
 ASDF4_MIRROR="$MIRRORS_DIR/asdf4"
 ASDF2_MIRROR="$MIRRORS_DIR/asdf2"
+ASDF225_MIRROR="$MIRRORS_DIR/asdf225"
 REPO_TOOL="/home/jimmieh/local/android/repo"
 
 # Setup:
@@ -30,5 +31,9 @@ $REPO_TOOL sync
 popd
 
 pushd $ASDF2_MIRROR
+$REPO_TOOL sync
+popd
+
+pushd $ASDF225_MIRROR
 $REPO_TOOL sync
 popd
