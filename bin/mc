@@ -1,12 +1,15 @@
 #!/bin/bash
 
 REUSE_COMMIT=0
-while getopts r option
+while getopts rb: option
 do
     case "$option"
         in
         r)
             REUSE_COMMIT=1
+            ;;
+        b)
+            COMMIT="$OPTARG"
             ;;
         ?)
             usage
@@ -29,6 +32,11 @@ then
     MAIN_BRANCH="devel"
 fi
 
+if [ -z "$BRANCH" ]
+then
+    BRANCH="$MAIN_BRANCH"
+fi
+
 if [ $REUSE_COMMIT -eq 1 ]
 then
     SUBJECT="$(git log --format=%B -n 1 | head -1)
@@ -43,8 +51,8 @@ else
     echo ""
 fi
 
-git fetch
-git checkout "origin/$MAIN_BRANCH"
+git fetch origin "$BRANCH"
+git checkout FETCH_HEAD
 manifest_updater $@
 git commit -eam "${SUBJECT}$(python3 ./clone_commit_message_generator/commit_message_generator.py --plain)${CHANGE_ID}"
 
