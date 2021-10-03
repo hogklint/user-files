@@ -23,6 +23,8 @@
   keepBackup = false
   prompt = false
   ff = only
+[pull]
+  ff = only
 [merge]
   ff = only
 [pull]
