@@ -9,7 +9,6 @@ function error()
 }
 
 [ $# -eq 1 ] || error "Usage: $(basename $0) <job url>"
-[ -f ~/.cred/jenkins_credentials ] || error "Could not find ~/.cred/jenkins_credentials"
 
 JOB_URL="$1"
 QUERY="api/json?pretty=1&tree=building,result"
@@ -47,3 +46,4 @@ fi
 
 notify-send -t 0 --icon=$STATUS_ICON  "Job completed: $JOB_URL" "Result: $JOB_RESULT"
 echo "Result: $JOB_RESULT"
+echo -e '\a'
