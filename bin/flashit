@@ -9,6 +9,7 @@ function error()
 [ -z ${AOSP_HOME+x} ] && error "AOSP_HOME not set"
 [ -z ${PROJ_DEVICE+x} ] && error "PROJ_DEVICE not set"
 [ -z ${PROJ_PRODUCT+x} ] && error "PROJ_PRODUCT not set"
+[ -z ${IMAGE_DIR+x} ] && error "IMAGE_DIR not set"
 
 CONSOLE_LOG=0
 PERMISSIVE=0
@@ -45,7 +46,11 @@ then
 else
     # fast_flashfiles directory missing
     #FLASH_THIS="$AOSP_HOME/out/target/product/$PROJ_DEVICE/fast_flashfiles"
-    FLASH_THIS="$AOSP_HOME/out/target/product/$PROJ_DEVICE/$PROJ_PRODUCT-flashfiles-eng.$USER.zip"
+    FLASH_THIS="$AOSP_HOME/out/target/product/$PROJ_DEVICE/$PROJ_PRODUCT-flashfiles-eng.aosp_builder.zip"
+    if [ "$PROJ_PRODUCT" = mermaid ]
+    then
+        FLASH_THIS=$REPO_HOME/../docker_tmp
+    fi
 fi
 
 function create_cmdline()
@@ -79,16 +84,52 @@ function wait_for_fastboot()
     echo "Found"
 }
 
-function run_fastboot()
+function intel_fastboot()
 {
-    echo "Flashing from: $FLASH_THIS"
-    [ -f "fastboot.sh" ] || error "No fastboot.sh file found"
     chmod 750 fastboot.sh
-
     unset ANDROID_SERIAL
     set -x
     ./fastboot.sh $ABL $DISABLE $CMDLINE || error "fastboot.sh failed"
     set +x
+}
+
+function qcom_fastboot_push()
+{
+    pushd fastboot_Snapdragon* > /dev/null
+    qcom_fastboot
+    popd > /dev/null
+}
+
+function qcom_fastboot()
+{
+    unset ANDROID_SERIAL
+    set -x
+    bash fastboot_cmds || error "fastboot_cmds failed"
+    fastboot reboot
+    set +x
+}
+
+# Expand snapdragon glob
+function exists()
+{
+    [ "$#" -eq 1 ] && [ -f "$1" ]
+}
+
+function run_fastboot()
+{
+    echo "Flashing from: $FLASH_THIS"
+    if [ -f "fastboot.sh" ]
+    then
+        intel_fastboot
+    elif [ -f "fastboot_cmds" ]
+    then
+        qcom_fastboot
+    elif exists fastboot_Snapdragon*/fastboot_cmds
+    then
+        qcom_fastboot_push
+    else
+        error "No fastboot script found"
+    fi
 }
 
 function is_url()
@@ -99,11 +140,24 @@ function is_url()
 
 function dl_file
 {
-    TMP_FILE="$(mktemp --suffix ".zip")" || error "Could not create temp directory"
-    trap "rm -r $TMP_FILE" EXIT
-    echo "Downloading to $TMP_FILE"
-    curl -o "$TMP_FILE" "$1" || error "Could not download "$1" to $TMP_FILE"
-    FLASH_THIS="$TMP_FILE"
+    IMAGE_NAME=$(basename "$1")
+    FLASH_THIS="$IMAGE_DIR/$IMAGE_NAME"
+    if [ -f "$FLASH_THIS" ]
+    then
+        echo "Image already downloaded: $FLASH_THIS"
+        return
+    fi
+
+    echo "Downloading to $FLASH_THIS"
+    curl -o "$FLASH_THIS" "$1" || error "Could not download "$1" to $IMAGE_DIR"
+}
+
+function unpack_tar
+{
+    TMP_DIR="$(mktemp -d)" || error "Could not create temp directory"
+    trap "rm -r $TMP_DIR $TMP_FILE" EXIT
+    tar xvf "$FLASH_THIS" -C "$TMP_DIR" || error "Could not extract $FLASH_THIS to $TMP_DIR"
+    FLASH_THIS="$TMP_DIR"
 }
 
 function unpack_zip
@@ -117,6 +171,7 @@ function unpack_zip
 is_url $FLASH_THIS && dl_file $FLASH_THIS
 
 [ -f "$FLASH_THIS" ] && [ "zip" = ${FLASH_THIS##*.} ] && unpack_zip
+[ -f "$FLASH_THIS" ] && [ "gz" = ${FLASH_THIS##*.} ] && unpack_tar
 
 [ -d "$FLASH_THIS" ] || error "Flashfiles directory missing: $FLASH_THIS"
 
@@ -127,16 +182,16 @@ create_cmdline
 if [ $PROJ_PRODUCT = asdf4_kraken ]
 then
     [ $(fastboot devices | wc -l) -ne 1 ] && vip pwr bm 2
-elif [ $PROJ_PRODUCT = asdf3_hydra ]
+elif [ "$PROJ_PRODUCT" = hydra ] || [ "$PROJ_PRODUCT" = mermaid ]
 then
-    [ $(fastboot devices | wc -l) -ne 1 ] && { mp su 0 usb_otg_switch.sh p; sleep 2; adb reboot bootloader; }
+    [ $(fastboot devices | wc -l) -ne 1 ] && adb reboot bootloader
 fi
 
 wait_for_fastboot
 
 run_fastboot
 
-if [ $PROJ_PRODUCT = asdf4_kraken ]
+if [ $PROJ_PRODUCT = kraken ]
 then
     vip pwr bm 1
 fi
