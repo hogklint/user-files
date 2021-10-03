@@ -10,7 +10,10 @@ function error()
 [ -z ${PROJ_DEVICE+x} ] && error "PROJ_DEVICE not set"
 [ -z ${PROJ_PRODUCT+x} ] && error "PROJ_PRODUCT not set"
 
-while getopts adp option
+CONSOLE_LOG=0
+PERMISSIVE=0
+
+while getopts acdp option
 do
     case "$option"
         in
@@ -21,6 +24,11 @@ do
             DISABLE="--disable-verity --disable-verification"
             ;;
         p)
+            PERMISSIVE=1
+            CMDLINE="--cmdline"
+            ;;
+        c)
+            CONSOLE_LOG=1
             CMDLINE="--cmdline"
             ;;
         ?)
@@ -45,8 +53,18 @@ function create_cmdline()
     if [ -n "$CMDLINE" ] && [ ! -f cmdline.img ]
     then
         echo "Creating permissive cmdline.img"
+        CMD=""
+        if [ "$PERMISSIVE" -eq 1 ]
+        then
+            CMD="enforcing=0\nandroidboot.selinux=permissive\n"
+        fi
+        if [ "$CONSOLE_LOG" -eq 1 ]
+        then
+            CMD="${CMD}loglevel=7\n"
+        fi
+
         dd if=/dev/zero of="cmdline.img" bs=1M count=1 iflag=fullblock
-        echo -en "enforcing=0\nandroidboot.selinux=permissive\n" | dd of="cmdline.img" conv=nocreat,notrunc
+        echo -en "$CMD" | dd of=cmdline.img conv=nocreat,notrunc
     fi
 }
 
