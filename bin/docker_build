@@ -5,28 +5,51 @@ function error()
   echo "Error: $@" >&2
   exit -1
 }
+[ -z ${REPO_HOME+x} ] && error "REPO_HOME not set"
 [ -z ${AOSP_HOME+x} ] && error "AOSP_HOME not set"
 [ -z ${MIRROR_PATH+x} ] && error "PROJ_DEVICE not set"
+[ -z ${CURRENTPROJ+x} ] && error "CURRENTPROJ not set"
 
 DOCKER_AOSP_BUILDER="aosp_builder:0.3"
+DOCKER_HOME="/home/aosp_builder"
+ASDF225_MIRROR_VOLUME="$MIRROR_PATH/asdf225:$MIRROR_PATH/asdf225:ro"
 ASDF2_MIRROR_VOLUME="$MIRROR_PATH/asdf2:$MIRROR_PATH/asdf2:ro"
 ASDF4_MIRROR_VOLUME="$MIRROR_PATH/asdf4:$MIRROR_PATH/asdf4:ro"
-AOSP_VOLUME="$AOSP_HOME:/home/jenkins/aosp:ro"
-OUT_VOLUME="$AOSP_HOME/../docker_out:/home/jenkins/aosp/out"
-CCACHE_VOLUME="$HOME/.ccache:/home/jenkins/.ccache"
-GO_BUILD_CACHE_VOLUME="$HOME/.cache:/home/jenkins/.cache"
-SET_CCACHE_ENV="-e USE_CCACHE=Y \
-    -e CC_WRAPPER=/usr/local/bin/ccache \
-    -e CXX_WRAPPER=/usr/local/bin/ccache"
+CCACHE_VOLUME="$HOME/.ccache:/opt/ccache"
+GO_BUILD_CACHE_VOLUME="$HOME/.cache:$DOCKER_HOME/.cache"
+AOSP_VOLUME="$REPO_HOME:$DOCKER_HOME/aosp_src:ro"
+OUT_VOLUME="$REPO_HOME/../docker_out:$DOCKER_HOME/aosp_src/out"
+CONTAINER_NAME="${CURRENTPROJ}_abuilder"
+QCOM_TOOLS="$REPO_HOME/../pkg:/pkg:ro"
+QCOM_TMP="$REPO_HOME/../docker_tmp:/tmp"
 
-while getopts i option
+USE_UID=$(id -u)
+USE_GID=$(id -g)
+
+if [ "ASDF225" == "$CURRENTPROJ" ]
+then
+    #DOCKER_AOSP_BUILDER="qcom_builder:test"
+    DOCKER_AOSP_BUILDER="qcom_builder:0.2"
+    DOCKER_HOME="/aosp"
+    OUT_VOLUME="$REPO_HOME/../docker_out:$DOCKER_HOME/sources/apps/LINUX/android/out"
+    AOSP_VOLUME="$REPO_HOME:$DOCKER_HOME/sources"
+    CCACHE_VOLUME="$HOME/.ccache:$DOCKER_HOME/.ccache"
+    GO_BUILD_CACHE_VOLUME="$HOME/.cache:$DOCKER_HOME/.cache"
+fi
+
+while getopts ir option
 do
     case "$option"
         in
         i)
             # interactive
             CMD="bash"
-            EXTRA_FLAGS="-ti"
+            CONTAINER_NAME="${CONTAINER_NAME}_interactive"
+            ;;
+        r)
+            # root
+            USE_UID=0
+            USE_GID=0
             ;;
         ?)
             error "Unknown option"
@@ -40,30 +63,37 @@ then
     pane="$(htop_that_tmux)"
     trap "unhtop_that_tmux $pane" EXIT
 
-    CMD="pushd /home/jenkins/aosp && source build/envsetup.sh && lunch $LUNCH_IT && make"
+    CMD="source build/envsetup.sh && lunch $LUNCH_IT && make"
     if [ 0 -eq $# ]
     then
         CMD="$CMD droid flashfiles"
     else
         CMD="$CMD $@"
     fi
+
+    if [ "ASDF225" == "$CURRENTPROJ" ]
+    then
+        CMD="./buildtarget $@"
+    fi
 fi
 
 set -x
-docker run  --rm \
-    $EXTRA_FLAGS \
-    -v $ASDF2_MIRROR_VOLUME \
-    -v $ASDF4_MIRROR_VOLUME \
-    -v $AOSP_VOLUME \
-    -v $OUT_VOLUME \
-    -v $CCACHE_VOLUME \
-    -v $GO_BUILD_CACHE_VOLUME \
-    -u $(id -u):$(id -g) \
-    -e HOME="/home/jenkins" \
+docker run --rm \
+    -ti \
+    -v "$ASDF225_MIRROR_VOLUME" \
+    -v "$ASDF2_MIRROR_VOLUME" \
+    -v "$ASDF4_MIRROR_VOLUME" \
+    -v "$AOSP_VOLUME" \
+    -v "$OUT_VOLUME" \
+    -v "$CCACHE_VOLUME" \
+    -v "$GO_BUILD_CACHE_VOLUME" \
+    -v "$QCOM_TOOLS" \
+    -v "$QCOM_TMP" \
+    -e PUID="$USE_UID" \
+    -e PGID="$USE_GID" \
     -h "$(hostname)-aosp_builder" \
-    --name abuilder \
-    $SET_CCACHE_ENV \
-    $DOCKER_AOSP_BUILDER /bin/bash -c "$CMD"
+    --name "$CONTAINER_NAME" \
+    "$DOCKER_AOSP_BUILDER" /bin/bash -c "$CMD"
 
 date
 echo -e '\a'
