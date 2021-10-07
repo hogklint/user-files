@@ -1,0 +1,6 @@
+xautolock -time 20 -locker slock &
+udiskie --tray &
+numlockx
+local/bin/kb
+local/bin/setmonitor.sh
+exec awesome
