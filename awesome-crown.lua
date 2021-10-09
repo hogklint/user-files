@@ -560,7 +560,7 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 function sleep(n)
   os.execute("sleep " .. tonumber(n))
 end
---awful.util.spawn("/home/jimmieh/local/bin/run_once.sh")
+--awful.util.spawn("/home/jhogklint/local/bin/run_once.sh")
 awful.spawn.once("zim", { floating = false, screen = 1, tag = "5" } )
 awful.spawn.once("chromium --restore-last-session ", { floating = false, screen = function() return screen.count() > 1 and 2 or 1 end, tag = "2" } )
 awful.spawn.once("nm-applet", {} )
