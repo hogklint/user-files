@@ -1,6 +1,8 @@
 xautolock -time 20 -locker slock &
 udiskie --tray &
 numlockx
+# Mute bell
+xset b 0
 local/bin/kb
 local/bin/setmonitor.sh
 exec awesome
