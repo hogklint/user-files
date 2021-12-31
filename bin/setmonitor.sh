@@ -4,8 +4,9 @@ DP1="DP-1-2-8"
 DP2="DP-1-2-1-8"
 HDMI1="HDMI-1"
 
-DP1="DVI-D-0"
-DP2="DP-4"
+DP1="DP-1"
+DP2="DP-2" # Right thunderbolt port
+DP2="DP-3" # Left thunderbolt port
 
 CONNECTED_MONITORS="$(xrandr | grep -E "\sconnected" | cut -d' ' -f1)"
 
@@ -16,12 +17,10 @@ function is_monitor()
 
 if [ -n "$(is_monitor $DP1)" ] && [ -n "$(is_monitor $DP2)" ]
 then
-    set -x
-    xrandr --output $DP1 --auto --right-of $DP2 --output $DP2 --auto --primary
+    xrandr --output $INTERNAL_MONITOR --off --output $DP1 --auto --pos 0x120 --output $DP2 --auto --rotate right --pos 2560x0
     echo "Dual: $DP1, $DP2"
 elif [ -n "$(is_monitor $DP2)" ] && [ -n "$(is_monitor $HDMI1)" ]
 then
-    set -x
     xrandr --output $DP2 --auto --primary --output $HDMI1 --auto --right-of $DP2 --rotate left --output $INTERNAL_MONITOR --off
     echo "Dual: $HDMI1, $DP2"
 elif [ -n "$(is_monitor $DP1)" ] && [ -n "$(is_monitor $INTERNAL_MONITOR)" ]
