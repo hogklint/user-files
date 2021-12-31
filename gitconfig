@@ -27,8 +27,8 @@
   ff = only
 [merge]
   ff = only
-[pull]
-  ff = only
+[fetch]
+  prune = true
 [commit]
   verbose = true
 [advice]
