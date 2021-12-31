@@ -561,10 +561,11 @@ function sleep(n)
   os.execute("sleep " .. tonumber(n))
 end
 --awful.util.spawn("/home/jhogklint/local/bin/run_once.sh")
-awful.spawn.once("zim", { floating = false, screen = 1, tag = "5" } )
 awful.spawn.once("chromium --restore-last-session ", { floating = false, screen = function() return screen.count() > 1 and 2 or 1 end, tag = "2" } )
 awful.spawn.once("nm-applet", {} )
 -- awful.spawn.once("urxvt -e tmuxifier load-session tbd", { floating = false, maximized = true, screen = function() return screen.count() > 1 and 2 or 1 end, tag = "1" } )
+awful.spawn.once("urxvt -e tmux", { floating = false, maximized = true, screen = 1, tag = "1" } )
+awful.spawn.once("urxvt -e tmux", { floating = false, maximized = true, screen = function() return screen.count() > 1 and 2 or 1 end, tag = "1" } )
 -- }}}
 
 
