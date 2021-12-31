@@ -1,0 +1,31 @@
+#!/bin/bash
+set -eo pipefail
+
+trap "echo -e '\a'" EXIT
+
+error()
+{
+  echo ""
+  echo "error: $@" >&2
+  exit 1
+}
+
+sub_build()
+{
+  if ! make -C "$1" build restart
+  then
+    error "$1 failed"
+  fi
+}
+
+pushd "$PLATFORM_HOME"
+sub_build DKBase
+sub_build DKModules
+sub_build DKRestBase
+sub_build DKRestAPI
+sub_build DKRecipeRunner
+popd
+
+echo ""
+echo "Build completed succesfully"
+echo ""
