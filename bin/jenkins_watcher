@@ -11,8 +11,8 @@ function error()
 [ $# -eq 1 ] || error "Usage: $(basename $0) <job url>"
 
 JOB_URL="$1"
-QUERY="api/json?pretty=1&tree=building,result"
-CRED="$(pass acompany/jenkins)"
+QUERY="api/json?pretty=1&tree=building,result,description"
+CRED="$(pass kd/jenkins)"
 
 [[ $JOB_URL == */ ]] || JOB_URL="${JOB_URL}/"
 
@@ -26,6 +26,7 @@ function update_status()
     #echo "$JOB_OUTPUT"
     JOB_BUILDING=$(echo "$JOB_OUTPUT" | grep building | sed -r 's/.*building.\s+:\s+([a-zA-Z]+).*/\1/')
     JOB_RESULT=$(echo "$JOB_OUTPUT" | grep result | sed -r 's/.*result.\s+:\s+"?([a-zA-Z]+).*/\1/')
+    JOB_DESC=$(echo "$JOB_OUTPUT" | grep description | sed -r 's/.*description.\s+:\s+"?(.+)"?,/\1/')
 }
 
 echo "Monitoring: $JOB_URL"
@@ -44,6 +45,6 @@ else
     STATUS_ICON="/usr/share/icons/oxygen/base/32x32/status/security-medium.png"
 fi
 
-notify-send -t 0 --icon=$STATUS_ICON  "Job completed: $JOB_URL" "Result: $JOB_RESULT"
+notify-send -t 0 --icon=$STATUS_ICON  "Job completed: $JOB_DESC" "$JOB_URL\nResult: $JOB_RESULT"
 echo "Result: $JOB_RESULT"
 echo -e '\a'
