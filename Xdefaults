@@ -1,5 +1,9 @@
 urxvt.font:     xft:bitstream vera sans mono:size=8:antialias=false:autohint=true
+#urxvt.font:     xft:bitstream vera sans mono:size=14:antialias=false:autohint=true
+
+# 4k screen
 #urxvt*font:             xft:DejaVu Sans Mono:autohint=true:size=20
+
 #urxvt*.font:  xft:DejaVu Sans Mono:autohint=true:antialias=false:pixelsize=10
 #urxvt*font:           xft:Inconsolata:size=8:autohint=true
 urxvt*termName:         rxvt
@@ -7,7 +11,7 @@ urxvt*background:       #000000
 urxvt*foreground:       #cccccc
 urxvt*scrollBar:        false
 urxvt*perl-lib:         /usr/lib/urxvt/perl/
-urxvt*perl-ext-common:  default,matcher
+urxvt*perl-ext-common:  default,matcher,resize-font
 urxvt*url-launcher:      /usr/bin/chromium
 urxvt*matcher.button:   1
 urxvt*fading:           15
