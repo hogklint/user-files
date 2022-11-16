@@ -1,11 +1,14 @@
 #!/usr/bin/bash
-USERNAME="jimmieh"
+USERNAME="jhogklint"
 
 LOCK_FILE="/tmp/monitor_changed.lock"
 
-while [ -f $LOCK_FILE ]; do sleep 1; done
+i=0
+while [ -f $LOCK_FILE ]; do sleep 1; i=$((i+1)); done
+[ $i -gt 5 ] && exit 0
 touch $LOCK_FILE
 trap "rm -f $LOCK_FILE" EXIT
+sleep 10
 
 echo "$BASHPID $(date) monitor_changed running" >> /home/$USERNAME/tmp/udev.log
 if [ -f /home/$USERNAME/local/bin/setmonitor.sh ]
