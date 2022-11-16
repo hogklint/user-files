@@ -1,12 +1,12 @@
 #!/bin/bash
 INTERNAL_MONITOR="eDP-1"
-DP1="DP-1-2-8"
-DP2="DP-1-2-1-8"
 HDMI1="HDMI-1"
-
-DP1="DP-1"
-DP2="DP-2" # Right thunderbolt port
-DP2="DP-3" # Left thunderbolt port
+# Dock in right thunderbolt
+DP1="DP-2-3"
+DP2="DP-2-1"
+# Dock in left thunderbolt
+DP1="DP-3-3"
+DP2="DP-3-1"
 
 CONNECTED_MONITORS="$(xrandr | grep -E "\sconnected" | cut -d' ' -f1)"
 
@@ -17,7 +17,7 @@ function is_monitor()
 
 if [ -n "$(is_monitor $DP1)" ] && [ -n "$(is_monitor $DP2)" ]
 then
-    xrandr --output $INTERNAL_MONITOR --off --output $DP1 --auto --pos 0x120 --output $DP2 --auto --rotate right --pos 2560x0
+    xrandr --output $DP1 --auto --primary --output $DP2 --auto --right-of $DP1 --rotate left --output $INTERNAL_MONITOR --off
     echo "Dual: $DP1, $DP2"
 elif [ -n "$(is_monitor $DP2)" ] && [ -n "$(is_monitor $HDMI1)" ]
 then
