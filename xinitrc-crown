@@ -1,7 +1,8 @@
 export XDG_SESSION_TYPE=x11
 xautolock -time 20 -locker slock &
 udiskie --tray &
-redshift-gtk -l '57.70716:11.96679' -m drm &
+# redshift-gtk -l '57.70716:11.96679' -m drm &
+redshift-gtk -l '57.70716:11.96679' -m vidmode &
 pasystray &
 flameshot &
 cbatticon -u 60 -c poweroff -l 15 -r 3 &
@@ -9,5 +10,4 @@ numlockx
 # Mute bell
 xset b 0
 local/bin/kb
-local/bin/setmonitor.sh
 exec awesome
