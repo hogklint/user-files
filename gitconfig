@@ -12,6 +12,8 @@
   l = log --graph --date-order --decorate
   la = log --graph --date-order --all --pretty=oneline
   showtool = "!showci () { rev=${1:-HEAD}; git difftool $rev~1 $rev; }; showci $1"
+  fix = commit --fixup
+  rf = rebase -i --autosquash
 [push]
   default = tracking
 [diff]
