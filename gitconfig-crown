@@ -2,4 +2,4 @@
   path = ~/repos/user-files/gitconfig
 [user]
   name = Jimmie Högklint
-#email = 
+  email =
