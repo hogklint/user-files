@@ -19,6 +19,7 @@
 [diff]
   tool = kdiff3
   colorMoved = plain
+  algorithm = histogram
 [difftool]
   prompt = false
 [mergetool]
