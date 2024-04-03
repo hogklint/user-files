@@ -21,7 +21,7 @@
   default = tracking
 [diff]
   tool = kdiff3
-  colorMoved = plain
+  colorMoved = default
   algorithm = histogram
 [difftool]
   prompt = false
