@@ -1,7 +1,0 @@
-Secure sshd configs
-Protocol 2
-PasswordAuthentication no
-PermitEmptyPasswords no
-X11Forwarding no
-MaxAuthTries 2
-PermitRootLogin no
