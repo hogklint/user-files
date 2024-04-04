@@ -1,0 +1,13 @@
+[".config/nvim"]
+    type = "git-repo"
+    branch = "nvim"
+    url = "git@github.com:hogklint/vim-env.git"
+    refreshPeriod = "1m"
+    clone.args = ["--branch", "nvim", "--single-branch"]
+
+[".vim"]
+    type = "git-repo"
+    branch = "nvim"
+    url = "git@github.com:hogklint/vim-env.git"
+    refreshPeriod = "1m"
+    clone.args = ["--branch", "master", "--single-branch"]
