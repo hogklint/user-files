@@ -1,0 +1,54 @@
+[user]
+  name = Jimmie Högklint
+  email = {{ .email }}
+  signingkey =
+[color]
+  branch = auto
+  diff = auto
+  status = auto
+[alias]
+  co = checkout
+  a = log --graph --pretty=format:'%Cred%h%Creset - %Cgreen(%ci)%C(yellow)%d%Creset%s %C(bold blue)<%an>%Creset' --abbrev-commit --date-order
+  al = log --graph --pretty=format:'%Cred%h%Creset - %Cgreen(%ci)%C(yellow)%d %Creset%s %C(bold blue)<%an>%Creset' --abbrev-commit --date-order -C -M --all
+  alc = log --graph --pretty=format:'%Cred%h%Creset - %Cgreen(%ci)%Creset %s %C(bold blue)<%an>%Creset' --abbrev-commit --date-order -C -M --all
+  alt = log --graph --pretty=format:'%Cred%h%Creset - %Cgreen(%ci)%C(yellow)%d%Creset%s %C(bold blue)<%an>%Creset' --abbrev-commit --topo-order -C -M --all
+  s = log --graph --pretty=format:'%Cred%h%Creset - %Cgreen(%ci)%C(yellow)%d%Creset%s %C(bold blue)<%an>%Creset' --abbrev-commit --date-order --stat
+  l = log --graph --date-order --decorate
+  la = log --graph --date-order --all --pretty=oneline
+  showtool = "!showci () { rev=${1:-HEAD}; git difftool $rev~1 $rev; }; showci $1"
+  fix = commit --fixup
+  rf = rebase -i --autosquash
+[push]
+  default = tracking
+[diff]
+  tool = kdiff3
+  colorMoved = default
+  algorithm = histogram
+[difftool]
+  prompt = false
+[mergetool]
+  keepBackup = false
+  prompt = false
+  ff = only
+[pull]
+  ff = only
+[merge]
+  ff = only
+  conflictstyle = diff3
+[fetch]
+  prune = true
+[commit]
+  verbose = true
+[advice]
+	detachedHead = false
+{{- if (eq .chezmoi.hostname "crown") }}
+[core]
+  # https://github.com/dandavison/delta
+  pager = delta
+[interactive]
+  diffFilter = delta --color-only
+[delta]
+  navigate = true    # use n and N to move between diff sections
+  light = false      # set to true if you're in a terminal w/ a light background color (e.g. the default macOS terminal)
+  line-numbers = true
+{{- end }}
