@@ -37,6 +37,6 @@ set -g @thumbs-command 'tmux set-buffer -- {} && tmux paste-buffer'
 set -g @thumbs-upcase-command 'tmux set-buffer -- {} && tmux display-message \"Copied {}\"'
 set -g @thumbs-hint-fg-color blue
 
-{{ if or (eq .chezmoi.hostname "crown") (eq .chezmoi.hostname "rebound") -}}
+{{ if eq .chezmoi.hostname "crown" "rebound" -}}
 set -g status-right '#[fg=red]#(/home/{{- .chezmoi.username -}}/local/bin/tmuxstatus)'
 {{- end }}
