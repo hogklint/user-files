@@ -1,18 +1,20 @@
+{{- $method := .cloneSsh | ternary "git@" "https://" }}
+{{- $sep := .cloneSsh | ternary ":" "/" }}
 [".config/nvim"]
     type = "git-repo"
-    url = "git@github.com:hogklint/vim-env.git"
+    url = "{{- $method -}}github.com{{- $sep -}}hogklint/vim-env.git"
     refreshPeriod = "1h"
     clone.args = ["--branch", "nvim", "--single-branch"]
 
 [".vim"]
     type = "git-repo"
-    url = "git@github.com:hogklint/vim-env.git"
+    url = "{{- $method -}}github.com{{- $sep -}}hogklint/vim-env.git"
     refreshPeriod = "1h"
     clone.args = ["--branch", "master", "--single-branch"]
 
 [".zsh"]
     type = "git-repo"
-    url = "git@github.com:hogklint/zsh-env.git"
+    url = "{{- $method -}}github.com{{- $sep -}}hogklint/zsh-env.git"
     refreshPeriod = "1h"
     clone.args = ["--branch", "master", "--single-branch"]
 
