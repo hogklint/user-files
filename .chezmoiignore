@@ -1,0 +1,21 @@
+# Only X on crown
+{{ if ne .chezmoi.hostname "crown" }}
+.Xdefaults
+.Xmodmap
+.config/autorandr
+.config/awesome
+.config/kitty
+.urlview
+.xinitrc
+{{ end }}
+
+
+# No systemd on rebourn
+{{ if eq .chezmoi.hostname "rebourn" }}
+.config/systemd
+{{ end }}
+
+# Only k3s on timeless
+{{ if ne .chezmoi.hostname "timeless" }}
+local/bin/kubectl
+{{ end }}
