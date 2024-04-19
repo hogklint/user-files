@@ -1,5 +1,5 @@
 # Only X on crown
-{{ if ne .chezmoi.hostname "crown" }}
+{{ if and (ne .chezmoi.hostname "crown") (ne .chezmoi.hostname "braid") }}
 .Xdefaults
 .Xmodmap
 .config/autorandr
