@@ -589,7 +589,7 @@ awful.spawn.once("firefox",
   { floating = false, screen = function() return screen.count() > 1 and 2 or 1 end, tag = "2" })
 awful.spawn.once("nm-applet", {})
 -- awful.spawn.once("urxvt -e tmuxifier load-session tbd", { floating = false, maximized = true, screen = function() return screen.count() > 1 and 2 or 1 end, tag = "1" } )
-awful.spawn.once("kitty tmux", { floating = false, maximized = true, screen = 1, tag = "1" })
-awful.spawn.once("kitty tmux",
+awful.spawn.once("kitty tmux new-session -A -s 1", { floating = false, maximized = true, screen = 1, tag = "1" })
+awful.spawn.once("kitty tmux new-session -A -s 0",
   { floating = false, maximized = true, screen = function() return screen.count() > 1 and 2 or 1 end, tag = "1" })
 -- }}}
