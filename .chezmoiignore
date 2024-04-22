@@ -19,3 +19,8 @@
 {{ if ne .chezmoi.hostname "timeless" }}
 local/bin/kubectl
 {{ end }}
+
+# Only on Mint as the login manager acts different (does not call .xinitrc)
+{{ if ne .chezmoi.hostname "braid" }}
+.xsessionrc
+{{ end }}
