@@ -515,6 +515,16 @@ awful.rules.rules = {
 		properties = { floating = true },
 	},
 
+	-- Floating zoom and don't steal focus
+	{
+		rule_any = {
+			class = {
+				"zoom",
+			},
+		},
+		properties = { floating = true, focus = false },
+	},
+
 	-- Add titlebars to normal clients and dialogs
 	{
 		rule_any = { type = { "normal", "dialog" } },
