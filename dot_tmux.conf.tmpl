@@ -39,7 +39,7 @@ set -g @thumbs-upcase-command 'tmux set-buffer -- {} && tmux display-message \"C
 set -g @thumbs-hint-fg-color blue
 
 bind-key e source-file ~/.tmux/log-changed-file.conf
-
 {{ if eq .chezmoi.hostname "crown" "rebound" -}}
+
 set -g status-right '#[fg=red]#(/home/{{- .chezmoi.username -}}/local/bin/tmuxstatus)'
-{{- end }}
+{{- end -}}
