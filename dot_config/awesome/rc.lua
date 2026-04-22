@@ -356,7 +356,39 @@ globalkeys = gears.table.join(
 	-- Menubar
 	awful.key({ modkey }, "p", function()
 		menubar.show()
-	end, { description = "show the menubar", group = "launcher" })
+	end, { description = "show the menubar", group = "launcher" }),
+
+	-- Media
+	awful.key({}, "XF86AudioPlay", function()
+		awful.spawn("playerctl play-pause", false)
+	end, { description = "play/pause media", group = "media" }),
+	awful.key({}, "XF86AudioNext", function()
+		awful.spawn("playerctl next", false)
+	end, { description = "next track", group = "media" }),
+	awful.key({}, "XF86AudioPrev", function()
+		awful.spawn("playerctl previous", false)
+	end, { description = "previous track", group = "media" }),
+	awful.key({}, "XF86AudioStop", function()
+		awful.spawn("playerctl stop", false)
+	end, { description = "stop media", group = "media" }),
+
+	-- Volume Keys
+	-- awful.key({}, "XF86AudioRaiseVolume", function()
+	-- 	awful.spawn("pactl set-sink-volume @DEFAULT_SINK@ +5%", false)
+	-- end, { description = "raise volume", group = "media" }),
+	-- awful.key({}, "XF86AudioLowerVolume", function()
+	-- 	awful.spawn("pactl set-sink-volume @DEFAULT_SINK@ -5%", false)
+	-- end, { description = "lower volume", group = "media" }),
+	-- Media Volume
+	awful.key({}, "XF86AudioRaiseVolume", function()
+		awful.spawn("playerctl volume 0.05+", false)
+	end, { description = "raise player volume", group = "media" }),
+	awful.key({}, "XF86AudioLowerVolume", function()
+		awful.spawn("playerctl volume 0.05-", false)
+	end, { description = "lower player volume", group = "media" }),
+	awful.key({}, "XF86AudioMute", function()
+		awful.spawn("pactl set-sink-mute @DEFAULT_SINK@ toggle", false)
+	end, { description = "mute volume", group = "media" })
 )
 
 clientkeys = gears.table.join(
