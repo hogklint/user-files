@@ -43,3 +43,6 @@ bind-key e source-file ~/.tmux/log-changed-file.conf
 
 set -g status-right '#[fg=red]#(/home/{{- .chezmoi.username -}}/local/bin/tmuxstatus)'
 {{- end -}}
+
+# Copy to system clipboard
+set -g set-clipboard on
