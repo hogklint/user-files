@@ -19,6 +19,7 @@
   fix = commit --fixup
   rf = rebase -i --autosquash
   rff = !git rebase -i --autosquash $(git rev-list --merges -n 1 HEAD)
+  push-stack  = !git branch --contains $(git rev-list --merges -n 1 HEAD) --merged HEAD --format='%(refname:short)' | grep -vE '^main$' |  xargs -p git push --atomic --force-with-lease origin
 [push]
   default = tracking
 [diff]
