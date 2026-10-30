@@ -43,6 +43,8 @@
   verbose = true
 [advice]
 	detachedHead = false
+[rebase]
+	updateRefs = true
 {{- if (eq .chezmoi.hostname "crown") }}
 [core]
   # https://github.com/dandavison/delta
